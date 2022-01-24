@@ -1,13 +1,12 @@
 import Link from "next/link";
 import NavBar from "../Components/Navbar";
 
-const index = () => {
+const Home = () => {
   return (
     <div>
- 
-      Index
+      Home
     </div>
   );
 };
 
-export default index;
+export default Home;
