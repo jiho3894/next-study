@@ -1,26 +1,22 @@
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Seo from "../Components/Seo";
 
-const API_Key = "9594c9ccbbcc42235a2072ad7d3699ae";
-
-const Home = () => {
-  const [movies, setMovies] = useState();
-  useEffect(() => {
-    (async () => {
-      const { results } = await (
-        await fetch(
-          `https://api.themoviedb.org/3/movie/popular?api_key=${API_Key}`
-        )
-      ).json();
-      setMovies(results);
-    })();
-  }, []);
+export default function Home({ results }) {
+  const router = useRouter();
+  console.log(router);
+  const onClick = (id, title) => {
+    router.push(`/movies/${title}/${id}`);
+  };
   return (
     <div className="container">
       <Seo title="Home" />
-      {!movies && <h4>Loading...</h4>}
-      {movies?.map((movie) => (
-        <div className="movie" key={movie.id}>
+      {results?.map((movie) => (
+        <div
+          onClick={() => onClick(movie.id, movie.original_title)}
+          className="movie"
+          key={movie.id}
+        >
           <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
           <h4>{movie.original_title}</h4>
         </div>
@@ -48,6 +44,15 @@ const Home = () => {
       `}</style>
     </div>
   );
-};
+}
 
-export default Home;
+export const getServerSideProps = async () => {
+  const { results } = await (
+    await fetch("http://localhost:3000/api/movies")
+  ).json();
+  return {
+    props: {
+      results,
+    },
+  };
+};
